@@ -25,6 +25,13 @@ export function ChatComposer({
     onSend(value)
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
   return (
     <div className="relative w-150 bg-[#1A1A1A] border-[0.5px] border-[#222222]/10 rounded-2xl shadow-chat-input">
       <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
@@ -40,6 +47,7 @@ export function ChatComposer({
             placeholder="Ask your next question"
             onChange={(e) => setValue(e.target.value)}
             onInput={autoGrow}
+            onKeyDown={handleKeyDown}
             className="w-full resize-none bg-transparent outline-none text-base leading-relaxed font-light text-white placeholder:text-[#555]"
           />
         </div>
@@ -60,7 +68,12 @@ export function ChatComposer({
                 : "bg-[#AAAAAA] opacity-60 cursor-not-allowed"}
             `}
           >
-            <Image src="/icons/arrow-up-02.svg" alt="send" width={16} height={16} />
+            <Image
+              src="/icons/arrow-up-02.svg"
+              alt="send"
+              width={16}
+              height={16}
+            />
           </button>
         </div>
       </div>
