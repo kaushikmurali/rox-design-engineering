@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 
 type Phase = "booting" | "working"
 
@@ -37,47 +37,101 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
 
         {/* Activity log */}
         {phase === "working" && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              type: "spring",
-              stiffness: 180,
-              damping: 22,
-            }}
+          <div
             className="w-150 mt-4 px-4 gap-x-4 items-stretch flex flex-row"
           >
             <div className="flex flex-col items-center text-sm text-white">
-              <Image
-                src="/icons/search-01.svg"
-                alt="search"
-                width={16}
-                height={16}
-              />
+                <motion.div
+                    initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{
+                        type: "spring",
+                        duration: 0.4,
+                        bounce: 0, 
+                        delay: 0.2,
+                    }}
+                    >
+                    <Image
+                        src="/icons/search-01.svg"
+                        alt="search"
+                        width={16}
+                        height={16}
+                    />
+                </motion.div>
 
-                <div 
+                <motion.div 
                     className="h-full w-px
-                    bg-[linear-gradient(to_bottom,rgba(170,170,170,0)_0%,rgba(170,170,170,0.5)_45%,rgba(170,170,170,0)_100%)]" 
+                    bg-[linear-gradient(to_bottom,rgba(170,170,170,0)_0%,rgba(170,170,170,0.5)_45%,rgba(170,170,170,0)_100%)]"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{
+                        type: "spring",
+                        duration: 0.15,
+                        bounce: 0, 
+                        delay: 0.6,
+                    }} 
                 />
-                </div>
+            </div>
 
             <div className="flex flex-col gap-y-4">
-                <span className="text-sm text-[#AAAAAA] font-light">
+                <motion.span 
+                    className="text-sm text-[#AAAAAA] font-light"
+                    initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{
+                        type: "spring",
+                        duration: 0.4,
+                        bounce: 0, 
+                        delay: 0.2,
+                    }}
+                >
                     Looking at any recent meetings in past couple days and summarizing findings
-                </span>
+                </motion.span>
 
                 <div className="flex flex-col gap-y-2">
-                    <div className="text-[10px] text-[#888888] font-mono">
-                    Searching
-                    </div>
+                    <motion.div 
+                        className="text-[10px] text-[#888888] font-mono"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                            type: "spring",
+                            duration: 0.2,
+                            bounce: 0, 
+                            delay: 0.65,
+                        }}
+                    >
+                        Searching
+                    </motion.div>
 
                     <div className="flex gap-2 flex-wrap">
-                    <SearchChip label="Searching calendar for recent meetings" />
-                    <SearchChip label="Searching over meetings with Stripe" />
+                        <motion.div 
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                type: "spring",
+                                duration: 0.15,
+                                bounce: 0, 
+                                delay: 0.9,
+                            }}
+                        >
+                            <SearchChip label="Searching calendar for recent meetings" />
+                        </motion.div>
+                        <motion.div 
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                type: "spring",
+                                duration: 0.15,
+                                bounce: 0, 
+                                delay: 0.95,
+                            }}
+                        >
+                            <SearchChip label="Searching over meetings with Stripe" />
+                        </motion.div>
                     </div>
                 </div>
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
     </section>
@@ -100,12 +154,13 @@ function ProgressCard({ phase }: { phase: Phase }) {
         <div className="relative flex-1 h-5 overflow-hidden">
           <motion.span
             key={phase}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
             transition={{
               type: "spring",
-              stiffness: 200,
-              damping: 24,
+              duration: 0.20,
+              bounce: 0
             }}
             className="absolute left-0 text-white"
           >
@@ -118,15 +173,17 @@ function ProgressCard({ phase }: { phase: Phase }) {
 
       {/* Progress bar */}
       <div className="h-1 rounded-full bg-[#253726] overflow-hidden">
-        <motion.div
-          className="h-full bg-[#6DBF6F]"
-          animate={{ width: isBooting ? "0%" : "25%" }}
-          transition={{
-            type: "spring",
-            stiffness: 140,
-            damping: 20,
-          }}
-        />
+        <AnimatePresence initial={false}>
+            <motion.div
+            className="h-full bg-[#6DBF6F]"
+            animate={{ width: isBooting ? "0%" : "25%" }}
+            transition={{
+                type: "spring",
+                duration: 2.0,
+                bounce: 0
+            }}
+            />
+        </AnimatePresence>
       </div>
     </div>
   )
