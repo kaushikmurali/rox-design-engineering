@@ -1,18 +1,24 @@
 import Image from "next/image"
 
-export function Sidebar() {
+export function Sidebar({
+  onResetChat,
+}: {
+  onResetChat: () => void
+}) {
   return (
     <aside className="w-14 p-2 flex flex-col items-center gap-1">
       <SidebarButton
         src="/icons/rox-logomark.svg"
         alt="Rox"
         muted={false}
+        onClick={onResetChat}
       />
 
       <SidebarButton
         src="/icons/pencil.svg"
         alt="New chat"
         muted
+        onClick={onResetChat}
       />
 
       <div className="mt-auto">
@@ -28,18 +34,20 @@ export function Sidebar() {
   )
 }
 
-
 function SidebarButton({
   src,
   alt,
   muted = true,
+  onClick,
 }: {
   src: string
   alt: string
   muted?: boolean
+  onClick?: () => void
 }) {
   return (
     <button
+      onClick={onClick}
       className="
         group
         w-10 h-10 rounded-lg p-2

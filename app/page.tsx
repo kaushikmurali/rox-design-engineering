@@ -1,12 +1,9 @@
-import { Sidebar } from "./components/Sidebar";
-import { ChatWindow } from "./components/ChatWindow";
+import { ChatScreen } from "./components/ChatScreen"
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex-row bg-[#010101] py-3 pr-3 flex items-top justify-top">
-      <Sidebar />
-
-      <ChatWindow />
+    <main className="min-h-screen flex bg-[#010101] py-3 pr-3">
+      <ChatScreen />
     </main>
   )
 }
