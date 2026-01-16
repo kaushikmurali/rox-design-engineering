@@ -17,11 +17,30 @@ export function ChatComposer() {
   }
 
   return (
-    <div className="relative overflow-hidden bg-[#1A1A1A] border-[0.5px] w-150 border-[#222222]/10 rounded-2xl shadow-chat-input">
-      {/* Glow */}
-      <div className="ellipse-glow" />
+    <div
+      className="
+        relative
+        w-150
+        bg-[#1A1A1A]
+        border-[0.5px] border-[#222222]/10
+        rounded-2xl
+        shadow-chat-input
+      "
+    >
+      {/* ===== Glow layer (CLIPPED) ===== */}
+      <div
+        className="
+          absolute inset-0
+          overflow-hidden
+          rounded-2xl
+          pointer-events-none
+        "
+      >
+        <div className="ellipse-glow" />
+      </div>
 
-      <div className="flex flex-col relative z-10">
+      {/* ===== Content layer (FREE) ===== */}
+      <div className="relative z-10 flex flex-col">
         {/* Input area */}
         <div className="px-4 py-4">
           <textarea
@@ -59,7 +78,7 @@ export function ChatComposer() {
             `}
           >
             <Image
-              src="./icons/arrow-up-02.svg"
+              src="/icons/arrow-up-02.svg"
               alt="arrow-up"
               width={16}
               height={16}
@@ -70,4 +89,3 @@ export function ChatComposer() {
     </div>
   )
 }
-
