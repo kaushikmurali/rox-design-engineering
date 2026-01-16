@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
 
 type Account = {
   id: string
@@ -67,16 +68,19 @@ export function AccountSelector() {
         />
       </button>
 
-      {open && (
-        <AccountDropdown
-          accounts={accounts}
-          selected={selected}
-          onSelect={(account) => {
-            setSelected(account)
-            setOpen(false)
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {open && (
+            <AccountDropdown
+            accounts={accounts}
+            selected={selected}
+            onSelect={(account) => {
+                setSelected(account)
+                setOpen(false)
+            }}
+            />
+        )}
+        </AnimatePresence>
+
     </div>
   )
 }
@@ -94,16 +98,22 @@ function AccountDropdown({
   onSelect,
 }: AccountDropdownProps) {
   return (
-    <div
-      className="
-        absolute bottom-full left-0 mb-2
-        w-60
-        rounded-xl
-        bg-[#1A1A1A]
-        shadow-dropdown
-        overflow-hidden
-      "
-    >
+    <motion.div
+        initial={{ opacity: 0, y: -6, filter: "blur(4px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
+        transition={{ type: "spring", duration: 0.25, bounce: 0 }}
+        className="
+            absolute top-full left-0 mt-2
+            w-60
+            rounded-xl
+            bg-[#1A1A1A]
+            shadow-dropdown
+            overflow-hidden
+            z-20
+        "
+        >
+
       {/* Search (visual only) */}
       <div className="px-4 py-4">
         <div className="flex items-center gap-2 text-[#666] text-sm">
@@ -167,6 +177,6 @@ function AccountDropdown({
           )
         })}
       </div>
-    </div>
+    </motion.div>
   )
 }
