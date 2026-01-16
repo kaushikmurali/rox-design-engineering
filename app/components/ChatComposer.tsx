@@ -1,8 +1,13 @@
 "use client"
-import { useRef } from "react"
+
+import { useRef, useState } from "react"
+import Image from "next/image"
 
 export function ChatComposer() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [value, setValue] = useState("")
+
+  const hasText = value.trim().length > 0
 
   function autoGrow(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const el = e.target
@@ -12,7 +17,7 @@ export function ChatComposer() {
 
   return (
     <div className="relative overflow-hidden bg-[#1A1A1A] border-[0.5px] w-150 border-[#222222]/10 rounded-2xl shadow-chat-input">
-        {/* Glow */}
+      {/* Glow */}
       <div className="ellipse-glow" />
 
       <div className="flex flex-col relative z-10">
@@ -21,7 +26,9 @@ export function ChatComposer() {
           <textarea
             ref={textareaRef}
             rows={1}
+            value={value}
             placeholder="Ask your next question"
+            onChange={(e) => setValue(e.target.value)}
             onInput={autoGrow}
             className="
               w-full resize-none bg-transparent outline-none
@@ -38,15 +45,30 @@ export function ChatComposer() {
         {/* Bottom bar */}
         <div className="flex items-center justify-between px-4 py-3">
           <AccountSelector />
-          <button className="shrink-0" aria-label="Send message">
-            ↑
+
+          <button
+            disabled={!hasText}
+            aria-label="Send message"
+            className={`
+              p-2 rounded-full transition-all duration-150 ease-out
+              ${hasText
+                ? "bg-[linear-gradient(135deg,#D7B58C,#976B35)]"
+                : "bg-[#AAAAAA] cursor-not-allowed opacity-60"
+              }
+            `}
+          >
+            <Image
+              src="./icons/arrow-up-02.svg"
+              alt="arrow-up"
+              width={16}
+              height={16}
+            />
           </button>
         </div>
       </div>
     </div>
   )
 }
-
 
 
 export function AccountSelector() {
