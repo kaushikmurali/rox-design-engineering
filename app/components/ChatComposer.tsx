@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react"
 import Image from "next/image"
+import { AccountSelector } from "./AccountSelector"
 
 export function ChatComposer() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -70,12 +71,3 @@ export function ChatComposer() {
   )
 }
 
-
-export function AccountSelector() {
-  return (
-    <button className="flex items-center gap-2">
-      <span className="text-sm">Stripe</span>
-      <span>⌄</span>
-    </button>
-  )
-}

@@ -35,6 +35,15 @@ body {
       0px 4px 4px 0px rgba(0, 0, 0, .1),
       0px 8px 8px 0px rgba(0, 0, 0, .1);
   }
+  .shadow-selector-btn {
+    box-shadow:
+      0px 1px 0px 0px hsla(0, 0%, 100%, .03) inset, 
+      0px 0px 0px 1px hsla(0, 0%, 100%, .03) inset, 
+      0px 0px 0px 1px rgba(0, 0, 0, .01), 
+      0px 2px 2px 0px rgba(0, 0, 0, .01), 
+      0px 4px 4px 0px rgba(0, 0, 0, .01), 
+      0px 8px 8px 0px rgba(0, 0, 0, .01)
+  }
 }
 
 @layer utilities {
