@@ -15,7 +15,7 @@ function IconButton({
     <button
       className="
         group
-        p-4 rounded-lg p-2
+        rounded-lg p-2
         flex items-center justify-center
 
         hover:bg-[#1A1A1A]
