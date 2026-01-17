@@ -7,6 +7,7 @@ import { ShimmeringText } from "./ChatWindowHelpers/ShimmeringText"
 import { ActivityStep } from "./ChatWindowHelpers/ActivityStep"
 import { ProgressCard } from "./ChatWindowHelpers/ProgressCard"
 import { SearchChip } from "./ChatWindowHelpers/SearchChip"
+import { AnswerComponent } from "./ChatWindowHelpers/AnswerComponent"
 
 type Phase = "booting" | "working"
 type Step = 1 | 2
@@ -90,6 +91,7 @@ export function ChatRunningWindow({
 
     // global teardown
     const [hideAllSteps, setHideAllSteps] = useState(false)
+    const [progressVisualDone, setProgressVisualDone] = useState(false)
 
 
 
@@ -188,8 +190,8 @@ export function ChatRunningWindow({
                         phase={phase}
                         currentStep={currentProgressStep}
                         isCompleted={step4DoneVisualComplete}
+                        onVisualComplete={() => setProgressVisualDone(true)}
                     />
-
                 </div>
 
                 {/* Activity log */}
@@ -397,6 +399,10 @@ export function ChatRunningWindow({
                         </motion.div>
                 )}
                 </AnimatePresence>
+
+
+                {/* Answer */}
+                {step4DoneVisualComplete && progressVisualDone && <AnswerComponent />}
 
 
 

@@ -25,11 +25,13 @@ export function ProgressCard({
   currentStep,
   totalSteps = 4,
   isCompleted = false,
+  onVisualComplete,
 }: {
   phase: Phase
   currentStep: number
   totalSteps?: number
   isCompleted?: boolean
+  onVisualComplete?: () => void
 }) {
     const isBooting = phase === "booting"
 
@@ -68,7 +70,7 @@ export function ProgressCard({
 
         const t = setTimeout(() => {
             setVisualCompleted(true)
-        }, 1200) // ← this is the extra delay you’re feeling is missing
+        }, 1200)
 
         return () => clearTimeout(t)
     }, [isCompleted])
@@ -76,10 +78,11 @@ export function ProgressCard({
 
 
 
+
   return (
     <motion.div
         layout
-        transition={{ type: "spring", duration: 0.45, bounce: 0 }}
+        transition={{ type: "spring", duration: 0.15, bounce: 0 }}
         className={`flex flex-col gap-y-4 px-4 pt-3 ${paddingBottomClass} rounded-2xl border border-[#1A1A1A]`}
     >
 
@@ -119,7 +122,7 @@ export function ProgressCard({
         </div>
 
         {/* Progress bar */}
-        <AnimatePresence initial={false}>
+        <AnimatePresence initial={false} onExitComplete={() => {onVisualComplete?.()}}>
             {!visualCompleted && (
                     <motion.div
                         key="progress-bar"

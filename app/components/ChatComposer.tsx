@@ -109,7 +109,7 @@ export function ChatComposer({
                     </button>
                 )}
 
-                <AccountSelector placement={isRunning ? "top" : "bottom"} />
+                <AccountSelector placement={location === "running-window" ? "top" : "bottom"} />
             </div>
 
             {isRunning ? 
