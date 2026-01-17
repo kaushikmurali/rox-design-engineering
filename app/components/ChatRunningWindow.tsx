@@ -74,6 +74,16 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
     // Step 3
     const [isStep3Done, setIsStep3Done] = useState(false)
     const [step3ActivityExited, setStep3ActivityExited] = useState(false)
+    const [step3DoneVisualComplete, setStep3DoneVisualComplete] = useState(false)
+
+    // Step 4
+    const [isStep4Done, setIsStep4Done] = useState(false)
+    const [step4ActivityExited, setStep4ActivityExited] = useState(false)
+    
+
+    // global teardown
+    const [hideAllSteps, setHideAllSteps] = useState(false)
+
 
 
     /* boot → working */
@@ -120,6 +130,18 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
     return () => clearTimeout(t)
     }, [step2ActivityExited])
 
+    // Step 4 lifecycle
+    useEffect(() => {
+    if (!step3ActivityExited) return
+
+    const t = setTimeout(() => {
+        setIsStep4Done(true)
+    }, 1800)
+
+    return () => clearTimeout(t)
+    }, [step3ActivityExited])
+
+
 
     const currentProgressStep =
         step3ActivityExited
@@ -132,199 +154,229 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
 
     return (
         <section className="w-full flex flex-col bg-[#0F0F0F] rounded-xl items-center">
-        <div className="w-173">
+            <div className="w-173">
 
-            {/* User message */}
-            <div className="pt-6 px-6 flex justify-end">
-            <div className="bg-[#1A1A1A] rounded-xl px-4 py-3 text-white text-sm">
-                {prompt}
-            </div>
-            </div>
-
-            {/* Progress */}
-            <div className="w-150 mt-6">
-                <ProgressCard
-                    phase={phase}
-                    currentStep={currentProgressStep}
-                />
-            </div>
-
-            {/* Activity log */}
-            {phase === "working" && (
-    <>
-        {/* STEP 1 — always rendered once started */}
-        <ActivityStep
-            isDone={isStep1Done}
-            runningIcon="/icons/search-01.svg"
-            doneIcon="/icons/checkmark-circle-02.svg"
-            runningText="Looking at any recent meetings in past couple days and summarizing findings"
-            doneText="Reviewed meetings for 30s"
-            onActivityExitComplete={() => setStep1ActivityExited(true)}
-            onDoneVisualComplete={() => {
-                // tiny intentional pause for breathing room
-                setTimeout(() => {
-                setStep1DoneVisualComplete(true)
-                }, 300)
-            }}
-        >
-        {!isStep1Done && (
-            <motion.div
-            className="flex flex-col gap-y-2"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ type: "spring", duration: 0.25, bounce: 0 }}
-            >
-            <motion.div
-                className="text-[10px] text-[#888888] font-mono"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.65 }}
-            >
-                Searching
-            </motion.div>
-
-            <div className="flex gap-2 flex-wrap">
-                <motion.div
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9, type: "spring", bounce: 0 }}
-                >
-                <SearchChip label="Searching calendar for recent meetings" />
-                </motion.div>
-
-                <motion.div
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.95, type: "spring", bounce: 0 }}
-                >
-                <SearchChip label="Searching over meetings with Stripe" />
-                </motion.div>
-            </div>
-            </motion.div>
-        )}
-        </ActivityStep>
-
-        {/* STEP 2 — appears after step 1 is done */}
-        {step1ActivityExited && step1DoneVisualComplete && (
-            <ActivityStep
-                isDone={isStep2Done}
-                runningIcon="/icons/briefcase-02.svg"
-                doneIcon="/icons/checkmark-circle-02.svg"
-                runningText="Searching my deals and seeing if there has been any activity on the deal"
-                doneText="Reviewed deal activity"
-                onActivityExitComplete={() => setStep2ActivityExited(true)}
-                onDoneVisualComplete={() => {
-                    setTimeout(() => {
-                    setStep2DoneVisualComplete(true)
-                    }, 300)
-                }}
-            >
-
-                {!isStep2Done && (
-                <motion.div
-                    className="flex flex-col gap-y-2"
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ type: "spring", duration: 0.25, bounce: 0 }}
-                >
-                    <motion.div
-                    className="text-[10px] text-[#888888] font-mono"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                    >
-                        Retrieving
-                    </motion.div>
-
-                    <div className="flex gap-2 flex-wrap">
-                    <motion.div
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.85, type: "spring", bounce: 0 }}
-                    >
-                        <SearchChip label="Retrieving available deal stages" />
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.9, type: "spring", bounce: 0 }}
-                    >
-                        <SearchChip
-                            label="Retrieving deals for Stripe"
-                            showChevron={true}
-                        />
-
-                    </motion.div>
+                {/* User message */}
+                <div className="pt-6 px-6 flex justify-end">
+                    <div className="bg-[#1A1A1A] rounded-xl px-4 py-3 text-white text-sm">
+                        {prompt}
                     </div>
-                </motion.div>
+                </div>
+
+                {/* Progress */}
+                <div className="w-150 mt-6">
+                    <ProgressCard
+                        phase={phase}
+                        currentStep={currentProgressStep}
+                    />
+                </div>
+
+                {/* Activity log */}
+                <AnimatePresence>
+                    {phase === "working" && !hideAllSteps && (
+                        <motion.div
+                            initial={{ opacity: 1 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                        >
+
+                            {/* STEP 1 — always rendered once started */}
+                            <ActivityStep
+                                isDone={isStep1Done}
+                                runningIcon="/icons/search-01.svg"
+                                doneIcon="/icons/checkmark-circle-02.svg"
+                                runningText="Looking at any recent meetings in past couple days and summarizing findings"
+                                doneText="Reviewed meetings for 30s"
+                                onActivityExitComplete={() => setStep1ActivityExited(true)}
+                                onDoneVisualComplete={() => {
+                                    // tiny intentional pause for breathing room
+                                    setTimeout(() => {
+                                    setStep1DoneVisualComplete(true)
+                                    }, 300)
+                                }}
+                            >
+                            {!isStep1Done && (
+                                <motion.div
+                                className="flex flex-col gap-y-2"
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -6 }}
+                                transition={{ type: "spring", duration: 0.25, bounce: 0 }}
+                                >
+                                <motion.div
+                                    className="text-[10px] text-[#888888] font-mono"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.65 }}
+                                >
+                                    Searching
+                                </motion.div>
+
+                                <div className="flex gap-2 flex-wrap">
+                                    <motion.div
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.9, type: "spring", bounce: 0 }}
+                                    >
+                                    <SearchChip label="Searching calendar for recent meetings" />
+                                    </motion.div>
+
+                                    <motion.div
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.95, type: "spring", bounce: 0 }}
+                                    >
+                                    <SearchChip label="Searching over meetings with Stripe" />
+                                    </motion.div>
+                                </div>
+                                </motion.div>
+                            )}
+                            </ActivityStep>
+
+                            {/* STEP 2 — appears after step 1 is done */}
+                            {step1ActivityExited && step1DoneVisualComplete && (
+                            <ActivityStep
+                                isDone={isStep2Done}
+                                runningIcon="/icons/briefcase-02.svg"
+                                doneIcon="/icons/checkmark-circle-02.svg"
+                                runningText="Searching my deals and seeing if there has been any activity on the deal"
+                                doneText="Reviewed deal activity"
+                                onActivityExitComplete={() => setStep2ActivityExited(true)}
+                                onDoneVisualComplete={() => {
+                                    setTimeout(() => {
+                                    setStep2DoneVisualComplete(true)
+                                    }, 300)
+                                }}
+                            >
+
+                                {!isStep2Done && (
+                                <motion.div
+                                    className="flex flex-col gap-y-2"
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -6 }}
+                                    transition={{ type: "spring", duration: 0.25, bounce: 0 }}
+                                >
+                                    <motion.div
+                                    className="text-[10px] text-[#888888] font-mono"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.6 }}
+                                    >
+                                        Retrieving
+                                    </motion.div>
+
+                                    <div className="flex gap-2 flex-wrap">
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 6 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.85, type: "spring", bounce: 0 }}
+                                    >
+                                        <SearchChip label="Retrieving available deal stages" />
+                                    </motion.div>
+
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 6 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.9, type: "spring", bounce: 0 }}
+                                    >
+                                        <SearchChip
+                                            label="Retrieving deals for Stripe"
+                                            showChevron={true}
+                                        />
+
+                                    </motion.div>
+                                    </div>
+                                </motion.div>
+                                )}
+                            </ActivityStep>
+                            )}
+
+
+                            {/* STEP 3 — appears after step 2 is done */}
+                            {step2ActivityExited && step2DoneVisualComplete && (
+                                <ActivityStep
+                                    isDone={isStep3Done}
+                                    runningIcon="/icons/globe-02.svg"
+                                    doneIcon="/icons/checkmark-circle-02.svg"
+                                    runningText="Searching Rox and the web for recent public news on this account"
+                                    doneText="Reviewed public news"
+                                    onActivityExitComplete={() => setStep3ActivityExited(true)}
+                                    onDoneVisualComplete={() => {
+                                        setTimeout(() => {
+                                        setStep3DoneVisualComplete(true)
+                                        }, 300)
+                                    }}
+                                >
+                                    {!isStep3Done && (
+                                    <motion.div
+                                        className="flex flex-col gap-y-2"
+                                        initial={{ opacity: 0, y: 8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -6 }}
+                                        transition={{ type: "spring", duration: 0.25, bounce: 0 }}
+                                    >
+                                        <motion.div
+                                        className="text-[10px] text-[#888888] font-mono"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 0.6 }}
+                                        >
+                                        Searching web
+                                        </motion.div>
+
+                                        <div className="flex gap-2 flex-wrap">
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.85, type: "spring", bounce: 0 }}
+                                        >
+                                            <SearchChip
+                                            label="Retrieving information on public news postings for Stripe"
+                                            showChevron={false}
+                                            />
+                                        </motion.div>
+
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.9, type: "spring", bounce: 0 }}
+                                        >
+                                            <SearchChip
+                                            label='Searching the web for "Stripe news September 2025"'
+                                            showChevron={false}
+                                            />
+                                        </motion.div>
+                                        </div>
+                                    </motion.div>
+                                    )}
+                                </ActivityStep>
+                            )}
+
+                            {/* STEP 4 */}
+                            {step3ActivityExited && step3DoneVisualComplete && (
+                                <ActivityStep
+                                    isDone={isStep4Done}
+                                    runningIcon="/icons/pen-01.svg"
+                                    doneIcon="/icons/checkmark-circle-02.svg"
+                                    runningText="Adding final touches"
+                                    doneText="Finalized summary"
+                                    onActivityExitComplete={() => setStep4ActivityExited(true)}
+                                    onDoneVisualComplete={() => {
+                                    setTimeout(() => {
+                                        setHideAllSteps(true)
+                                    }, 500)
+                                    }}
+                                >
+                                </ActivityStep>
+                            )}
+
+                        </motion.div>
                 )}
-            </ActivityStep>
-            )}
+                </AnimatePresence>
 
 
-            {/* STEP 3 — appears after step 2 is done */}
-            {step2ActivityExited && step2DoneVisualComplete && (
-                <ActivityStep
-                    isDone={isStep3Done}
-                    runningIcon="/icons/globe-02.svg"
-                    doneIcon="/icons/checkmark-circle-02.svg"
-                    runningText="Searching Rox and the web for recent public news on this account"
-                    doneText="Reviewed public news"
-                    onActivityExitComplete={() => setStep3ActivityExited(true)}
-                >
-                    {!isStep3Done && (
-                    <motion.div
-                        className="flex flex-col gap-y-2"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        transition={{ type: "spring", duration: 0.25, bounce: 0 }}
-                    >
-                        <motion.div
-                        className="text-[10px] text-[#888888] font-mono"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.6 }}
-                        >
-                        Searching web
-                        </motion.div>
-
-                        <div className="flex gap-2 flex-wrap">
-                        <motion.div
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.85, type: "spring", bounce: 0 }}
-                        >
-                            <SearchChip
-                            label="Retrieving information on public news postings for Stripe"
-                            showChevron={false}
-                            />
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.9, type: "spring", bounce: 0 }}
-                        >
-                            <SearchChip
-                            label='Searching the web for "Stripe news September 2025"'
-                            showChevron={false}
-                            />
-                        </motion.div>
-                        </div>
-                    </motion.div>
-                    )}
-                </ActivityStep>
-            )}
-
-
-    </>
-    )}
-
-        </div>
+            </div>
         </section>
     )
     }
