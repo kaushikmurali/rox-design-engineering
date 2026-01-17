@@ -28,12 +28,16 @@ export function ChatRunningScreen({
       </div>
 
       {/* Fixed composer */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <ChatComposer
-            variant={isCompleted ? "idle" : "running"}
-            onSend={() => {}}
-            location="running-window"
-        />
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 ">
+        <div className="ml-14 flex flex-col space-y-1 items-center pb-1">
+            <ChatComposer
+                variant={isCompleted ? "idle" : "running"}
+                onSend={() => {}}
+                location="running-window"
+            />
+
+            <span className="text-[#AAAAAA] text-sm pt-2">Command can make mistakes</span>
+        </div>
       </div>
 
     </section>

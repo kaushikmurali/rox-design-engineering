@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { motion } from "framer-motion"
 
 const REVEAL_ORDER = [
@@ -30,8 +30,24 @@ const REVEAL_ORDER = [
 
 const REVEAL_INTERVAL = 120 // ms — tweak for speed
 
-export function AnswerComponent() {
+export function AnswerComponent({
+  onRevealComplete,
+}: {
+  onRevealComplete?: () => void
+}) {
   const [visibleCount, setVisibleCount] = useState(0)
+  const hasNotifiedRef = useRef(false)
+
+  useEffect(() => {
+    if (
+      visibleCount >= REVEAL_ORDER.length &&
+      !hasNotifiedRef.current
+    ) {
+      hasNotifiedRef.current = true
+      onRevealComplete?.()
+    }
+  }, [visibleCount, onRevealComplete])
+
 
   useEffect(() => {
     const timer = setInterval(() => {

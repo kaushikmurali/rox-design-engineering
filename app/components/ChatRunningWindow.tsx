@@ -8,6 +8,7 @@ import { ActivityStep } from "./ChatWindowHelpers/ActivityStep"
 import { ProgressCard } from "./ChatWindowHelpers/ProgressCard"
 import { SearchChip } from "./ChatWindowHelpers/SearchChip"
 import { AnswerComponent } from "./ChatWindowHelpers/AnswerComponent"
+import { AnswerToolbar } from "./ChatWindowHelpers/AnswerToolbar"
 
 type Phase = "booting" | "working"
 type Step = 1 | 2
@@ -92,6 +93,7 @@ export function ChatRunningWindow({
     // global teardown
     const [hideAllSteps, setHideAllSteps] = useState(false)
     const [progressVisualDone, setProgressVisualDone] = useState(false)
+    const [answerRevealDone, setAnswerRevealDone] = useState(false)
 
 
 
@@ -174,7 +176,7 @@ export function ChatRunningWindow({
 
 
     return (
-        <section className="w-full flex flex-col bg-[#0F0F0F] rounded-xl items-center">
+        <section className="w-full flex flex-col bg-[#0F0F0F] rounded-xl items-center pb-25">
             <div className="w-173">
 
                 {/* User message */}
@@ -402,7 +404,16 @@ export function ChatRunningWindow({
 
 
                 {/* Answer */}
-                {step4DoneVisualComplete && progressVisualDone && <AnswerComponent />}
+                {step4DoneVisualComplete && progressVisualDone && (
+                    <div className="mt-6">
+                        <AnswerComponent
+                        onRevealComplete={() => setAnswerRevealDone(true)}
+                        />
+
+                        {answerRevealDone && <AnswerToolbar />}
+                    </div>
+                )}
+
 
 
 

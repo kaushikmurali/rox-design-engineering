@@ -81,7 +81,7 @@ export function ProgressCard({
 
   return (
     <motion.div
-        layout
+        layout="position"
         transition={{ type: "spring", duration: 0.15, bounce: 0 }}
         className={`flex flex-col gap-y-4 px-4 pt-3 ${paddingBottomClass} rounded-2xl border border-[#1A1A1A]`}
     >
