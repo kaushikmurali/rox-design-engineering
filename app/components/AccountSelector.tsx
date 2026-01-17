@@ -16,7 +16,13 @@ const accounts: Account[] = [
   { id: "vercel", name: "Vercel", icon: "/icons/vercel.png" },
 ]
 
-export function AccountSelector() {
+type DropdownPlacement = "top" | "bottom"
+
+export function AccountSelector({
+  placement = "bottom",
+}: {
+  placement?: "top" | "bottom"
+}) {
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState<Account>(accounts[1]) // Stripe default
   const ref = useRef<HTMLDivElement>(null)
@@ -71,12 +77,13 @@ export function AccountSelector() {
       <AnimatePresence>
         {open && (
             <AccountDropdown
-            accounts={accounts}
-            selected={selected}
-            onSelect={(account) => {
-                setSelected(account)
-                setOpen(false)
-            }}
+                accounts={accounts}
+                selected={selected}
+                placement={placement}
+                onSelect={(account) => {
+                    setSelected(account)
+                    setOpen(false)
+                }}
             />
         )}
         </AnimatePresence>
@@ -90,28 +97,33 @@ type AccountDropdownProps = {
   accounts: Account[]
   selected: Account
   onSelect: (account: Account) => void
+  placement: "top" | "bottom"
 }
 
 function AccountDropdown({
   accounts,
   selected,
   onSelect,
+  placement,
 }: AccountDropdownProps) {
+    const isTop = placement === "top"
+
   return (
     <motion.div
         initial={{ opacity: 0, y: -6, filter: "blur(4px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
         transition={{ type: "spring", duration: 0.25, bounce: 0 }}
-        className="
-            absolute top-full left-0 mt-2
+        className={`
+            absolute left-0
+            ${isTop ? "bottom-full mb-2" : "top-full mt-2"}
             w-60
             rounded-xl
             bg-[#1A1A1A]
             shadow-dropdown
             overflow-hidden
             z-20
-        "
+        `}
         >
 
       {/* Search (visual only) */}

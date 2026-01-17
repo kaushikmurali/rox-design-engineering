@@ -243,7 +243,7 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                                 runningIcon="/icons/briefcase-02.svg"
                                 doneIcon="/icons/checkmark-circle-02.svg"
                                 runningText="Searching my deals and seeing if there has been any activity on the deal"
-                                doneText="Reviewed deal activity"
+                                doneText="Retrieved recent deals for 45s"
                                 onActivityExitComplete={() => setStep2ActivityExited(true)}
                                 onDoneVisualComplete={() => {
                                     setTimeout(() => {
@@ -303,7 +303,7 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                                     runningIcon="/icons/globe-02.svg"
                                     doneIcon="/icons/checkmark-circle-02.svg"
                                     runningText="Searching Rox and the web for recent public news on this account"
-                                    doneText="Reviewed public news"
+                                    doneText="Searched web for 65s"
                                     onActivityExitComplete={() => setStep3ActivityExited(true)}
                                     onDoneVisualComplete={() => {
                                         setTimeout(() => {
@@ -379,6 +379,7 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                         </motion.div>
                 )}
                 </AnimatePresence>
+
 
 
             </div>
