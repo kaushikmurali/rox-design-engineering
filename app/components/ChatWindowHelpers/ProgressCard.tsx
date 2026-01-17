@@ -19,45 +19,62 @@ const fadeUpBlur = {
   },
 }
 
-export function ProgressCard({ phase }: { phase: Phase }) {
+export function ProgressCard({
+  phase,
+  currentStep,
+  totalSteps = 4,
+}: {
+  phase: Phase
+  currentStep: number
+  totalSteps?: number
+}) {
   const isBooting = phase === "booting"
+
+  const progressPercent = isBooting
+    ? "0%"
+    : `${(currentStep / totalSteps) * 100}%`
+
+  const labelText = isBooting
+    ? "Starting now..."
+    : `Step ${currentStep} of ${totalSteps}`
 
   return (
     <div className="flex flex-col gap-y-4 px-4 pt-3 pb-5 rounded-2xl border border-[#1A1A1A]">
-      {/* Header */}
-      <div className="flex items-center justify-between text-sm gap-2">
-        <Image src="/icons/rox-logomark.svg" alt="Rox" width={20} height={20} />
+        {/* Header */}
+        <div className="flex items-center justify-between text-sm gap-2">
+            <Image src="/icons/rox-logomark.svg" alt="Rox" width={20} height={20} />
 
-        <div className="relative flex-1 h-5 overflow-hidden">
-          <motion.span
-            key={phase}
-            variants={fadeUpBlur}
-            initial="hidden"
-            animate="visible"
-            transition={{ type: "spring", duration: 0.2, bounce: 0 }}
-            className="absolute left-0 text-white"
-          >
-            <ShimmeringText
-              text={isBooting ? "Starting now..." : "Step 1 of 4"}
-              duration={1.3}
-              opacity={0.22}
-            />
-          </motion.span>
+            <div className="relative flex-1 h-5 overflow-hidden">
+            <motion.span
+                key={labelText}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", duration: 0.2, bounce: 0 }}
+                className="absolute left-0 text-white"
+            >
+                <ShimmeringText
+                text={labelText}
+                duration={1.3}
+                opacity={0.22}
+                />
+            </motion.span>
+            </div>
+
+            <span className="text-[#AAAAAA]">2 mins left</span>
         </div>
 
-        <span className="text-[#AAAAAA] text-end">2 mins left</span>
-      </div>
+        {/* Progress bar */}
+        <div className="h-1 rounded-full bg-[#253726] overflow-hidden">
+            <AnimatePresence initial={false}>
+                <motion.div
+                className="h-full bg-[#6DBF6F]"
+                animate={{ width: progressPercent }}
+                transition={{ type: "spring", duration: 2, bounce: 0 }}
+                />
+            </AnimatePresence>
+        </div>
 
-      {/* Progress bar */}
-      <div className="h-1 rounded-full bg-[#253726] overflow-hidden">
-        <AnimatePresence initial={false}>
-          <motion.div
-            className="h-full bg-[#6DBF6F]"
-            animate={{ width: isBooting ? "0%" : "25%" }}
-            transition={{ type: "spring", duration: 2, bounce: 0 }}
-          />
-        </AnimatePresence>
-      </div>
     </div>
   )
 }
+
