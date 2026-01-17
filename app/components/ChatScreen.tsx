@@ -2,12 +2,11 @@
 "use client"
 
 import { useState } from "react"
-import { ChatWindow } from "./ChatWindow"
-import { ChatRunningWindow } from "./ChatRunningWindow"
-import { ChatComposer } from "./ChatComposer"
+import { ChatIdleScreen } from "./ChatIdleScreen"
+import { ChatRunningScreen } from "./ChatRunningScreen"
 import { Sidebar } from "./Sidebar"
 
-type ChatStatus = "idle" | "running"
+type ChatStatus = "idle" | "running" | "completed"
 
 export function ChatScreen() {
   const [status, setStatus] = useState<ChatStatus>("idle")
@@ -18,38 +17,32 @@ export function ChatScreen() {
     setStatus("running")
   }
 
+  function handleRunComplete() {
+    setStatus("completed")
+  }
+
   function resetChat() {
     setPrompt("")
     setStatus("idle")
   }
 
+  const composerVariant =
+    status === "running" ? "running" : "idle"
+
   return (
-    <div className="h-screen w-full flex bg-[#0F0F0F]">
+    <>
       <Sidebar onResetChat={resetChat} />
 
-      <div className="relative flex-1 flex justify-center">
-        <div className="relative w-173 h-full flex flex-col">
-
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto pb-[140px]">
-            {status === "idle" ? (
-              <ChatWindow onSend={handleSend} />
-            ) : (
-              <ChatRunningWindow prompt={prompt} />
-            )}
-          </div>
-
-          {/* Composer — only when running */}
-          {status === "running" && (
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pb-6">
-              <ChatComposer
-                onSend={handleSend}
-                variant="running"
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+      {status === "idle" ? (
+        <ChatIdleScreen onSend={handleSend} />
+      ) : (
+        <ChatRunningScreen
+          prompt={prompt}
+          onRunComplete={handleRunComplete}
+        />
+      )}
+    </>
   )
 }
+
+

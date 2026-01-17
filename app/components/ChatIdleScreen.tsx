@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { ChatComposer } from "./ChatComposer"
 
-export function ChatWindow({
+export function ChatIdleScreen({
   onSend,
 }: {
   onSend: (value: string) => void

@@ -6,13 +6,17 @@ import Image from "next/image"
 import { AccountSelector } from "./AccountSelector"
 
 type ComposerVariant = "idle" | "running"
+type ComposerLocation = "idle-screen" | "running-window"
+
 
 export function ChatComposer({
   onSend,
   variant = "idle",
+  location = "idle-screen",
 }: {
   onSend: (value: string) => void
   variant?: ComposerVariant
+  location?: ComposerLocation
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [value, setValue] = useState("")
@@ -39,11 +43,14 @@ export function ChatComposer({
     }
   }
 
+  const widthClass =
+  location === "running-window" ? "w-173" : "w-150"
+
   return (
     <div
       className={`
         relative
-        ${isRunning ? "w-173" : "w-150"}
+        ${widthClass}
         bg-[#1A1A1A]
         border-[0.5px] border-[#222222]/10
         rounded-2xl
@@ -79,27 +86,46 @@ export function ChatComposer({
         <div className="flex items-center justify-between px-4 py-3">
           <AccountSelector placement={isRunning ? "top" : "bottom"} />
 
-          <button
-            onClick={handleSend}
-            disabled={!hasText}
-            className={`
-              p-2 rounded-full
-              transition-transform duration-150 ease-out
-              active:scale-[0.97]
-              ${
-                hasText
-                  ? "bg-[linear-gradient(135deg,#D7B58C,#976B35)]"
-                  : "bg-[#AAAAAA] opacity-60 cursor-not-allowed"
-              }
-            `}
-          >
-            <Image
-              src="/icons/arrow-up-02.svg"
-              alt="send"
-              width={16}
-              height={16}
-            />
-          </button>
+            {isRunning ? 
+                <button
+                    onClick={handleSend}
+                    className={`
+                    p-2 rounded-full
+                    transition-transform duration-150 ease-out
+                    active:scale-[0.97]
+                    bg-[#333333]
+                    `}
+                >
+                    <Image
+                    src="/icons/stop.svg"
+                    alt="stop"
+                    width={16}
+                    height={16}
+                    />
+                </button> 
+          : 
+            <button
+                onClick={handleSend}
+                disabled={!hasText}
+                className={`
+                p-2 rounded-full
+                transition-transform duration-150 ease-out
+                active:scale-[0.97]
+                ${
+                    hasText
+                    ? "bg-[linear-gradient(135deg,#D7B58C,#976B35)]"
+                    : "bg-[#AAAAAA] opacity-60 cursor-not-allowed"
+                }
+                `}
+            >
+                <Image
+                src="/icons/arrow-up-02.svg"
+                alt="send"
+                width={16}
+                height={16}
+                />
+            </button>
+            }
         </div>
       </div>
     </div>

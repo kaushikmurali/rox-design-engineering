@@ -56,7 +56,13 @@ const fadeUp = {
   exit: { opacity: 0, y: -6 }
 }
 
-export function ChatRunningWindow({ prompt }: { prompt: string }) {
+export function ChatRunningWindow({
+  prompt,
+  onRunComplete,
+}: {
+  prompt: string
+  onRunComplete: () => void
+}) {
     const [phase, setPhase] = useState<Phase>("booting")
 
     const [currentStep, setCurrentStep] = useState<Step>(1)
@@ -141,6 +147,18 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
 
     return () => clearTimeout(t)
     }, [step3ActivityExited])
+
+    //Complete
+    useEffect(() => {
+    if (!step4DoneVisualComplete) return
+
+    const t = setTimeout(() => {
+        onRunComplete()
+    }, 300) // small grace delay for UI breathing room
+
+    return () => clearTimeout(t)
+    }, [step4DoneVisualComplete, onRunComplete])
+
 
 
 
