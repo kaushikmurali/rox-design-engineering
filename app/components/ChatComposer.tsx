@@ -62,7 +62,10 @@ export function ChatComposer({
             onClick={handleSend}
             disabled={!hasText}
             className={`
-              p-2 rounded-full transition-all
+              p-2 rounded-full
+              transition-transform duration-150 ease-out
+            active:scale-[0.97]
+
               ${hasText
                 ? "bg-[linear-gradient(135deg,#D7B58C,#976B35)]"
                 : "bg-[#AAAAAA] opacity-60 cursor-not-allowed"}

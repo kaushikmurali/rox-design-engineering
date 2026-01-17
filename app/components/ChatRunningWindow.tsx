@@ -6,6 +6,25 @@ import { AnimatePresence, motion } from "framer-motion"
 
 type Phase = "booting" | "working"
 
+const fadeUpBlur = {
+  hidden: {
+    opacity: 0,
+    y: 8,
+    filter: "blur(4px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+  },
+}
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0 },
+}
+
+
 export function ChatRunningWindow({ prompt }: { prompt: string }) {
   const [phase, setPhase] = useState<Phase>("booting")
 
@@ -42,8 +61,9 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
           >
             <div className="flex flex-col items-center text-sm text-white">
                 <motion.div
-                    initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    variants={fadeUpBlur}
+                    initial="hidden"
+                    animate="visible"
                     transition={{
                         type: "spring",
                         duration: 0.4,
@@ -76,8 +96,9 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
             <div className="flex flex-col gap-y-4">
                 <motion.span 
                     className="text-sm text-[#AAAAAA] font-light"
-                    initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    variants={fadeUpBlur}
+                    initial="hidden"
+                    animate="visible"
                     transition={{
                         type: "spring",
                         duration: 0.4,
@@ -91,8 +112,9 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                 <div className="flex flex-col gap-y-2">
                     <motion.div 
                         className="text-[10px] text-[#888888] font-mono"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        variants={fadeUp}
+                        initial="hidden"
+                        animate="visible"
                         transition={{
                             type: "spring",
                             duration: 0.2,
@@ -105,8 +127,9 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
 
                     <div className="flex gap-2 flex-wrap">
                         <motion.div 
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            variants={fadeUp}
+                            initial="hidden"
+                            animate="visible"
                             transition={{
                                 type: "spring",
                                 duration: 0.15,
@@ -117,8 +140,9 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                             <SearchChip label="Searching calendar for recent meetings" />
                         </motion.div>
                         <motion.div 
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            variants={fadeUp}
+                            initial="hidden"
+                            animate="visible"
                             transition={{
                                 type: "spring",
                                 duration: 0.15,
@@ -154,9 +178,10 @@ function ProgressCard({ phase }: { phase: Phase }) {
         <div className="relative flex-1 h-5 overflow-hidden">
           <motion.span
             key={phase}
-            initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+            variants={fadeUpBlur}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
             transition={{
               type: "spring",
               duration: 0.20,
