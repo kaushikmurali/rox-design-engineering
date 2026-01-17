@@ -28,15 +28,26 @@ export function ProgressCard({
   currentStep: number
   totalSteps?: number
 }) {
-  const isBooting = phase === "booting"
+    const isBooting = phase === "booting"
 
-  const progressPercent = isBooting
-    ? "0%"
-    : `${(currentStep / totalSteps) * 100}%`
+    const progressPercent = isBooting
+        ? "0%"
+        : `${(currentStep / totalSteps) * 100}%`
 
-  const labelText = isBooting
-    ? "Starting now..."
-    : `Step ${currentStep} of ${totalSteps}`
+    const labelText = isBooting
+        ? "Starting now..."
+        : `Step ${currentStep} of ${totalSteps}`
+
+    const timeLeftText = isBooting
+        ? "2 mins left"
+        : currentStep === 1
+        ? "2 mins left"
+        : currentStep === 2
+        ? "1 min left"
+        : currentStep === 3
+        ? "30s left"
+        : "Almost done"
+
 
   return (
     <div className="flex flex-col gap-y-4 px-4 pt-3 pb-5 rounded-2xl border border-[#1A1A1A]">
@@ -60,7 +71,7 @@ export function ProgressCard({
             </motion.span>
             </div>
 
-            <span className="text-[#AAAAAA]">2 mins left</span>
+            <span className="text-[#AAAAAA]">{timeLeftText}</span>
         </div>
 
         {/* Progress bar */}
