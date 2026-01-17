@@ -29,6 +29,8 @@ export function ActivityStep({
   doneText,
   showConnector = true,
   children,
+  onActivityExitComplete,
+  onDoneVisualComplete
 }: {
   isDone: boolean
   runningIcon: string
@@ -37,6 +39,8 @@ export function ActivityStep({
   doneText: string
   showConnector?: boolean
   children?: React.ReactNode
+  onActivityExitComplete?: () => void
+  onDoneVisualComplete?: () => void
 }) {
   return (
     <div className="flex mt-4 px-4 gap-x-4 items-stretch">
@@ -108,13 +112,14 @@ export function ActivityStep({
               initial="hidden"
               animate="visible"
               transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+              onAnimationComplete={onDoneVisualComplete}
             >
               {doneText}
             </motion.span>
           )}
         </AnimatePresence>
 
-        <AnimatePresence>
+        <AnimatePresence onExitComplete={onActivityExitComplete}>
           {!isDone && children}
         </AnimatePresence>
       </div>

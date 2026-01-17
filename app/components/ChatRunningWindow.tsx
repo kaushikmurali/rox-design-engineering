@@ -7,6 +7,7 @@ import { ShimmeringText } from "./ChatWindowHelpers/ShimmeringText"
 import { ActivityStep } from "./ChatWindowHelpers/ActivityStep"
 
 type Phase = "booting" | "working"
+type Step = 1 | 2
 
 const fadeUpBlur = {
   hidden: {
@@ -53,22 +54,17 @@ const fadeUp = {
   exit: { opacity: 0, y: -6 }
 }
 
-
 export function ChatRunningWindow({ prompt }: { prompt: string }) {
   const [phase, setPhase] = useState<Phase>("booting")
-  const [isStepDone, setIsStepDone] = useState(false)
 
-    useEffect(() => {
-    if (phase !== "working") return
-
-    const t = setTimeout(() => {
-        setIsStepDone(true)
-    }, 1800) // delay before switching to "done"
-
-    return () => clearTimeout(t)
-    }, [phase])
+  const [currentStep, setCurrentStep] = useState<Step>(1)
+  const [isStep1Done, setIsStep1Done] = useState(false)
+  const [step1ActivityExited, setStep1ActivityExited] = useState(false)
+  const [step1DoneVisualComplete, setStep1DoneVisualComplete] = useState(false)
 
 
+
+  /* boot → working */
   useEffect(() => {
     if (phase !== "booting") return
 
@@ -79,73 +75,112 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
     return () => clearTimeout(t)
   }, [phase])
 
+  /* step 1 lifecycle */
+  useEffect(() => {
+    if (phase !== "working") return
+
+    const t = setTimeout(() => {
+        setIsStep1Done(true)
+    }, 1800)
+
+    return () => clearTimeout(t)
+    }, [phase])
+
+
   return (
     <section className="w-full flex flex-col bg-[#0F0F0F] rounded-xl items-center">
       <div className="w-173">
 
-        {/* User message bubble */}
+        {/* User message */}
         <div className="pt-6 px-6 flex justify-end">
           <div className="bg-[#1A1A1A] rounded-xl px-4 py-3 text-white text-sm">
             {prompt}
           </div>
         </div>
 
-        {/* Progress card */}
+        {/* Progress */}
         <div className="w-150 mt-6">
           <ProgressCard phase={phase} />
         </div>
 
         {/* Activity log */}
         {phase === "working" && (
-          <ActivityStep
-            isDone={isStepDone}
-            runningIcon="/icons/search-01.svg"
-            doneIcon="/icons/checkmark-circle-02.svg"
-            runningText="Looking at any recent meetings in past couple days and summarizing findings"
-            doneText="Reviewed meetings for 30s"
-            >
+  <>
+    {/* STEP 1 — always rendered once started */}
+    <ActivityStep
+        isDone={isStep1Done}
+        runningIcon="/icons/search-01.svg"
+        doneIcon="/icons/checkmark-circle-02.svg"
+        runningText="Looking at any recent meetings in past couple days and summarizing findings"
+        doneText="Reviewed meetings for 30s"
+        onActivityExitComplete={() => setStep1ActivityExited(true)}
+        onDoneVisualComplete={() => {
+            // tiny intentional pause for breathing room
+            setTimeout(() => {
+            setStep1DoneVisualComplete(true)
+            }, 120)
+        }}
+    >
+      {!isStep1Done && (
+        <motion.div
+          className="flex flex-col gap-y-2"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ type: "spring", duration: 0.25, bounce: 0 }}
+        >
+          <motion.div
+            className="text-[10px] text-[#888888] font-mono"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.65 }}
+          >
+            Searching
+          </motion.div>
+
+          <div className="flex gap-2 flex-wrap">
             <motion.div
-                className="flex flex-col gap-y-2"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ type: "spring", duration: 0.25, bounce: 0 }}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, type: "spring", bounce: 0 }}
             >
-                <motion.div
-                className="text-[10px] text-[#888888] font-mono"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.65 }}
-                >
-                Searching
-                </motion.div>
-
-                <div className="flex gap-2 flex-wrap">
-                    <motion.div
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.9, type: "spring", bounce: 0 }}
-                    >
-                        <SearchChip label="Searching calendar for recent meetings" />
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.95, type: "spring", bounce: 0 }}
-                    >
-                        <SearchChip label="Searching over meetings with Stripe" />
-                    </motion.div>
-                </div>
-
+              <SearchChip label="Searching calendar for recent meetings" />
             </motion.div>
-        </ActivityStep>
 
-        )}
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.95, type: "spring", bounce: 0 }}
+            >
+              <SearchChip label="Searching over meetings with Stripe" />
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
+    </ActivityStep>
+
+    {/* STEP 2 — appears after step 1 is done */}
+    {step1ActivityExited && step1DoneVisualComplete && (
+        <ActivityStep
+            isDone={false}
+            runningIcon="/icons/briefcase-02.svg"
+            doneIcon="/icons/checkmark-circle-02.svg"
+            runningText="Searching my deals and seeing if there has been any activity on the deal"
+            doneText="Reviewed deal activity"
+        >
+            {/* Step 2 content */}
+        </ActivityStep>
+    )}
+
+
+  </>
+)}
+
       </div>
     </section>
   )
 }
+
 
 
 
