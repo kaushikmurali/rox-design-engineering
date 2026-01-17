@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { ShimmeringText } from "./ChatWindowHelpers/ShimmeringText"
+import { ActivityStep } from "./ChatWindowHelpers/ActivityStep"
 
 type Phase = "booting" | "working"
 
@@ -96,142 +97,50 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
 
         {/* Activity log */}
         {phase === "working" && (
-          <div
-            className="w-150 mt-4 px-4 gap-x-4 items-stretch flex flex-row"
-          >
-            <div className="flex flex-col items-center text-sm text-white">
-                <AnimatePresence mode="wait">
-                    {!isStepDone ? (
-                        <motion.div
-                        key="search"
-                        variants={fadeUpBlur}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        transition={{ type: "spring", duration: 0.40, bounce: 0 }}
-                        >
-                        <Image
-                            src="/icons/search-01.svg"
-                            alt="search"
-                            width={16}
-                            height={16}
-                        />
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                        key="done"
-                        variants={fadeUpBlur}
-                        initial="hidden"
-                        animate="visible"
-                        transition={{ type: "spring", duration: 0.35, bounce: 0 }}
-                        >
-                        <Image
-                            src="/icons/checkmark-circle-02.svg"
-                            alt="done"
-                            width={16}
-                            height={16}
-                        />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+          <ActivityStep
+            isDone={isStepDone}
+            runningIcon="/icons/search-01.svg"
+            doneIcon="/icons/checkmark-circle-02.svg"
+            runningText="Looking at any recent meetings in past couple days and summarizing findings"
+            doneText="Reviewed meetings for 30s"
+            >
+            <motion.div
+                className="flex flex-col gap-y-2"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ type: "spring", duration: 0.25, bounce: 0 }}
+            >
+                <motion.div
+                className="text-[10px] text-[#888888] font-mono"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.65 }}
+                >
+                Searching
+                </motion.div>
 
+                <div className="flex gap-2 flex-wrap">
+                    <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.9, type: "spring", bounce: 0 }}
+                    >
+                        <SearchChip label="Searching calendar for recent meetings" />
+                    </motion.div>
 
-                <AnimatePresence>
-                    {!isStepDone && (
-                        <motion.div
-                        key="connector"
-                        className="h-full w-px
-                        bg-[linear-gradient(to_bottom,rgba(170,170,170,0)_0%,rgba(170,170,170,0.5)_45%,rgba(170,170,170,0)_100%)]"
-                        variants={connectorVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        />
-                    )}
-                </AnimatePresence>
-
-
-
-            </div>
-
-            <div className="flex flex-col gap-y-4">
-                <AnimatePresence mode="wait">
-                    {!isStepDone ? (
-                        <motion.span
-                        key="search-text"
-                        className="text-sm text-[#AAAAAA] font-light"
-                        variants={fadeUpBlur}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        transition={{ type: "spring", duration: 0.40, bounce: 0 }}
-                        >
-                        Looking at any recent meetings in past couple days and summarizing findings
-                        </motion.span>
-                    ) : (
-                        <motion.span
-                        key="done-text"
-                        className="text-sm text-[#AAAAAA] font-light"
-                        variants={fadeUpBlur}
-                        initial="hidden"
-                        animate="visible"
-                        transition={{ type: "spring", duration: 0.35, bounce: 0 }}
-                        >
-                        Reviewed meetings for 30s
-                        </motion.span>
-                    )}
-                </AnimatePresence>
-
-
-                <div className="flex flex-col gap-y-2">
-
-                    <AnimatePresence>
-                        {!isStepDone && (
-                            <motion.div
-                            key="search-details"
-                            className="flex flex-col gap-y-2"
-                            variants={fadeUp}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                            transition={{ type: "spring", duration: 0.25, bounce: 0 }}
-                            >
-                                <motion.div
-                                    className="text-[10px] text-[#888888] font-mono"
-                                    variants={fadeUpBlur}
-                                    initial="hidden"
-                                    animate="visible"
-                                    transition={{ delay: 0.65 }}
-                                >
-                                    Searching
-                                </motion.div>
-
-                            <div className="flex gap-2 flex-wrap">
-                                <motion.div
-                                variants={fadeUpBlur}
-                                initial="hidden"
-                                animate="visible"
-                                transition={{ delay: 0.9 }}
-                                >
-                                    <SearchChip label="Searching calendar for recent meetings" />
-                                </motion.div>
-
-                                <motion.div
-                                variants={fadeUpBlur}
-                                initial="hidden"
-                                animate="visible"
-                                transition={{ delay: 0.95 }}
-                                >
-                                    <SearchChip label="Searching over meetings with Stripe" />
-                                </motion.div>
-                            </div>
-                            </motion.div>
-                        )}
-                        </AnimatePresence>
-
+                    <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.95, type: "spring", bounce: 0 }}
+                    >
+                        <SearchChip label="Searching over meetings with Stripe" />
+                    </motion.div>
                 </div>
-            </div>
-          </div>
+
+            </motion.div>
+        </ActivityStep>
+
         )}
       </div>
     </section>
