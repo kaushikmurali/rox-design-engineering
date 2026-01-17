@@ -79,6 +79,7 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
     // Step 4
     const [isStep4Done, setIsStep4Done] = useState(false)
     const [step4ActivityExited, setStep4ActivityExited] = useState(false)
+    const [step4DoneVisualComplete, setStep4DoneVisualComplete] = useState(false)
     
 
     // global teardown
@@ -168,7 +169,9 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                     <ProgressCard
                         phase={phase}
                         currentStep={currentProgressStep}
+                        isCompleted={step4DoneVisualComplete}
                     />
+
                 </div>
 
                 {/* Activity log */}
@@ -363,11 +366,13 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                                     doneText="Finalized summary"
                                     onActivityExitComplete={() => setStep4ActivityExited(true)}
                                     onDoneVisualComplete={() => {
-                                    setTimeout(() => {
+                                        setTimeout(() => {
+                                        setStep4DoneVisualComplete(true)
                                         setHideAllSteps(true)
-                                    }, 500)
+                                        }, 500)
                                     }}
                                 >
+
                                 </ActivityStep>
                             )}
 
