@@ -222,7 +222,11 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.9, type: "spring", bounce: 0 }}
                     >
-                        <SearchChip label="Retrieving deals for Stripe" />
+                        <SearchChip
+                            label="Retrieving deals for Stripe"
+                            showChevron={true}
+                        />
+
                     </motion.div>
                     </div>
                 </motion.div>
