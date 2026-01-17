@@ -56,6 +56,7 @@ export function ActivityStep({
               animate="visible"
               exit="exit"
               transition={{ type: "spring", duration: 0.4, bounce: 0 }}
+              className="pt-0.5"
             >
               <Image src={runningIcon} alt="" width={16} height={16} />
             </motion.div>
@@ -66,6 +67,7 @@ export function ActivityStep({
               initial="hidden"
               animate="visible"
               transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+              className="pt-0.5"
             >
               <Image src={doneIcon} alt="" width={16} height={16} />
             </motion.div>

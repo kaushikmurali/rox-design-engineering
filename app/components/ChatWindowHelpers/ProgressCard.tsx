@@ -131,7 +131,7 @@ export function ProgressCard({
                     >
                         <div className="h-1 rounded-full bg-[#253726]">
                         <motion.div
-                            className="h-full bg-[#6DBF6F]"
+                            className="h-full rounded-full bg-[#6DBF6F]"
                             animate={{ width: progressPercent }}
                             transition={{ type: "spring", duration: 2, bounce: 0 }}
                         />
