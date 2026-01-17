@@ -69,6 +69,12 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
     //Step 2
     const [isStep2Done, setIsStep2Done] = useState(false)
     const [step2ActivityExited, setStep2ActivityExited] = useState(false)
+    const [step2DoneVisualComplete, setStep2DoneVisualComplete] = useState(false)
+
+    // Step 3
+    const [isStep3Done, setIsStep3Done] = useState(false)
+    const [step3ActivityExited, setStep3ActivityExited] = useState(false)
+
 
     /* boot → working */
     useEffect(() => {
@@ -103,7 +109,25 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
         return () => clearTimeout(t)
     }, [step1ActivityExited, step1DoneVisualComplete])
 
-    const currentProgressStep = step1ActivityExited && step1DoneVisualComplete ? 2 : 1
+    // Step 3 lifecycle
+    useEffect(() => {
+    if (!step2ActivityExited) return
+
+    const t = setTimeout(() => {
+        setIsStep3Done(true)
+    }, 2200)
+
+    return () => clearTimeout(t)
+    }, [step2ActivityExited])
+
+
+    const currentProgressStep =
+        step3ActivityExited
+            ? 3
+            : step2ActivityExited
+            ? 2
+            : 1
+
 
 
     return (
@@ -140,7 +164,7 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                 // tiny intentional pause for breathing room
                 setTimeout(() => {
                 setStep1DoneVisualComplete(true)
-                }, 120)
+                }, 300)
             }}
         >
         {!isStep1Done && (
@@ -190,7 +214,13 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
                 runningText="Searching my deals and seeing if there has been any activity on the deal"
                 doneText="Reviewed deal activity"
                 onActivityExitComplete={() => setStep2ActivityExited(true)}
+                onDoneVisualComplete={() => {
+                    setTimeout(() => {
+                    setStep2DoneVisualComplete(true)
+                    }, 300)
+                }}
             >
+
                 {!isStep2Done && (
                 <motion.div
                     className="flex flex-col gap-y-2"
@@ -234,6 +264,61 @@ export function ChatRunningWindow({ prompt }: { prompt: string }) {
             </ActivityStep>
             )}
 
+
+            {/* STEP 3 — appears after step 2 is done */}
+            {step2ActivityExited && step2DoneVisualComplete && (
+                <ActivityStep
+                    isDone={isStep3Done}
+                    runningIcon="/icons/globe-02.svg"
+                    doneIcon="/icons/checkmark-circle-02.svg"
+                    runningText="Searching Rox and the web for recent public news on this account"
+                    doneText="Reviewed public news"
+                    onActivityExitComplete={() => setStep3ActivityExited(true)}
+                >
+                    {!isStep3Done && (
+                    <motion.div
+                        className="flex flex-col gap-y-2"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ type: "spring", duration: 0.25, bounce: 0 }}
+                    >
+                        <motion.div
+                        className="text-[10px] text-[#888888] font-mono"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                        >
+                        Searching web
+                        </motion.div>
+
+                        <div className="flex gap-2 flex-wrap">
+                        <motion.div
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.85, type: "spring", bounce: 0 }}
+                        >
+                            <SearchChip
+                            label="Retrieving information on public news postings for Stripe"
+                            showChevron={false}
+                            />
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.9, type: "spring", bounce: 0 }}
+                        >
+                            <SearchChip
+                            label='Searching the web for "Stripe news September 2025"'
+                            showChevron={false}
+                            />
+                        </motion.div>
+                        </div>
+                    </motion.div>
+                    )}
+                </ActivityStep>
+            )}
 
 
     </>
