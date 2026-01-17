@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
+import { ShimmeringText } from "./ChatWindowHelpers/ShimmeringText"
 
 type Phase = "booting" | "working"
 
@@ -189,7 +190,11 @@ function ProgressCard({ phase }: { phase: Phase }) {
             }}
             className="absolute left-0 text-white"
           >
-            {isBooting ? "Starting now..." : "Step 1 of 4"}
+            <ShimmeringText
+                text={isBooting ? "Starting now..." : "Step 1 of 4"}
+                duration={1.3}
+                opacity={0.22}
+            />
           </motion.span>
         </div>
 
