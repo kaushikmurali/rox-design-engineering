@@ -23,6 +23,7 @@ export function ChatComposer({
 
   const hasText = value.trim().length > 0
   const isRunning = variant === "running"
+  const [isBookmarked, setIsBookmarked] = useState(false)
 
   function autoGrow(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const el = e.target
@@ -84,7 +85,32 @@ export function ChatComposer({
         <div className="h-px w-full bg-white/5" />
 
         <div className="flex items-center justify-between px-4 py-3">
-          <AccountSelector placement={isRunning ? "top" : "bottom"} />
+            <div className="flex items-center gap-3">
+                {location === "running-window" && (
+                    <button
+                        onClick={() => setIsBookmarked(v => !v)}
+                        className="
+                            p-2 rounded-full
+                            transition-transform duration-150 ease-out
+                            active:scale-[0.97]
+                            bg-[#333333]
+                        "
+                    >
+                        <Image
+                        src={
+                            isBookmarked
+                            ? "/icons/bookmark-02-filled.svg"
+                            : "/icons/bookmark-02.svg"
+                        }
+                        alt="bookmark"
+                        width={16}
+                        height={16}
+                        />
+                    </button>
+                )}
+
+                <AccountSelector placement={isRunning ? "top" : "bottom"} />
+            </div>
 
             {isRunning ? 
                 <button
